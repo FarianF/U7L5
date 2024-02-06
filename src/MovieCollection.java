@@ -164,7 +164,20 @@ public class MovieCollection
 
     private void searchCast()
     {
+        System.out.println("Enter cast member");
+        String searchTerm = scanner.nextLine();
 
+        searchTerm = searchTerm.toLowerCase();
+
+        ArrayList<Movie> results = new ArrayList<Movie>();
+
+        for(int i = 0; i < movies.size(); i++){
+            String cast = movies.get(i).getCast();
+            cast = cast.toLowerCase();
+            if(cast.contains(searchTerm)){
+                results.add(movies.get(i));
+            }
+        }
     }
 
     private void searchKeywords()
