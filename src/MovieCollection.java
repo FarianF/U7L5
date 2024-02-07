@@ -170,14 +170,24 @@ public class MovieCollection
         searchTerm = searchTerm.toLowerCase();
 
         ArrayList<Movie> results = new ArrayList<Movie>();
+        ArrayList<String> casts = new ArrayList<>();
 
         for(int i = 0; i < movies.size(); i++){
             String cast = movies.get(i).getCast();
             cast = cast.toLowerCase();
             if(cast.contains(searchTerm)){
-                results.add(movies.get(i));
+                casts.add(movies.get(i).getCast());
             }
         }
+        for (int i = 0; i < casts.size(); i++)
+        {
+            String title = casts.get(i);
+            // this will print index 0 as choice 1 in the results list; better for user!
+            int choiceNum = i + 1;
+
+            System.out.println("" + choiceNum + ". " + title);
+        }
+
     }
 
     private void searchKeywords()
@@ -199,7 +209,7 @@ public class MovieCollection
 
             if (movieKeyword.indexOf(searchTerm) != -1)
             {
-                //add the Movie objest to the results list
+                //add the Movie object to the results list
                 results.add(movies.get(i));
             }
         }
@@ -217,16 +227,6 @@ public class MovieCollection
 
             System.out.println("" + choiceNum + ". " + title);
         }
-
-        System.out.println("Which movie would you like to learn more about?");
-        System.out.print("Enter number: ");
-
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        Movie selectedMovie = results.get(choice - 1);
-
-        displayMovieInfo(selectedMovie);
 
         System.out.println("\n ** Press Enter to Return to Main Menu **");
         scanner.nextLine();
