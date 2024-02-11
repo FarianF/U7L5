@@ -66,11 +66,11 @@ public class MovieCollection
         }
         else if (option.equals("r"))
         {
-            listHighestRated();
+            listTopRatedMovies();
         }
         else if (option.equals("h"))
         {
-            listHighestRevenue();
+            listTopRevenueMovies();
         }
         else
         {
@@ -263,20 +263,134 @@ public class MovieCollection
         scanner.nextLine();
     }
 
-    private void listGenres()
-    {
+    private void listGenres() {
+        ArrayList<String> genresList = new ArrayList<>();
 
+        // Iterate through all movies and add unique genres to the list
+        for (Movie movie : movies) {
+            String[] genresArray = movie.getGenres().split("\\|");
+            for (String genre : genresArray) {
+                if (!genresList.contains(genre)) {
+                    genresList.add(genre);
+                }
+            }
+        }
+
+        // Sort the genres list alphabetically
+        Collections.sort(genresList);
+
+        // Display genres
+        System.out.println("Genres:");
+        for (int i = 0; i < genresList.size(); i++) {
+            System.out.println((i + 1) + ". " + genresList.get(i));
+        }
+
+        // Prompt user to select a genre
+        System.out.println("Enter the number of the genre to see movies: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (choice >= 1 && choice <= genresList.size()) {
+            String selectedGenre = genresList.get(choice - 1);
+            ArrayList<Movie> moviesInSelectedGenre = new ArrayList<>();
+
+            // Find movies in the selected genre
+            for (Movie movie : movies) {
+                if (movie.getGenres().toLowerCase().contains(selectedGenre.toLowerCase())) {
+                    moviesInSelectedGenre.add(movie);
+                }
+            }
+
+            // Sort movies alphabetically by title
+            sortResults(moviesInSelectedGenre);
+
+            // Display movies in the selected genre
+            System.out.println("Movies in the genre \"" + selectedGenre + "\":");
+            for (int i = 0; i < moviesInSelectedGenre.size(); i++) {
+                System.out.println((i + 1) + ". " + moviesInSelectedGenre.get(i).getTitle());
+            }
+
+            // Prompt user to select a movie
+            System.out.println("Enter the number of the movie to learn more about it: ");
+            int movieChoice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            if (movieChoice >= 1 && movieChoice <= moviesInSelectedGenre.size()) {
+                Movie selectedMovie = moviesInSelectedGenre.get(movieChoice - 1);
+                displayMovieInfo(selectedMovie);
+            } else {
+                System.out.println("Invalid movie choice.");
+            }
+        } else {
+            System.out.println("Invalid genre choice.");
+        }
     }
 
-    private void listHighestRated()
-    {
 
+    private void listTopRatedMovies() {
+        // Create a copy of movies list to avoid modifying the original list
+        ArrayList<Movie> moviesCopy = new ArrayList<>(movies);
+
+        // Sort movies by user rating in descending order
+        Collections.sort(moviesCopy, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie movie1, Movie movie2) {
+                return Double.compare(movie2.getUserRating(), movie1.getUserRating());
+            }
+        });
+
+        // Display top 50 rated movies
+        System.out.println("Top 50 Rated Movies:");
+        for (int i = 0; i < Math.min(50, moviesCopy.size()); i++) {
+            Movie movie = moviesCopy.get(i);
+            System.out.println((i + 1) + ". " + movie.getTitle() + ": " + movie.getUserRating());
+        }
+
+        // Prompt user to select a movie
+        System.out.println("Enter the number of the movie to learn more about it: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (choice >= 1 && choice <= Math.min(50, moviesCopy.size())) {
+            Movie selectedMovie = moviesCopy.get(choice - 1);
+            displayMovieInfo(selectedMovie);
+        } else {
+            System.out.println("Invalid movie choice.");
+        }
     }
 
-    private void listHighestRevenue()
-    {
+    private void listTopRevenueMovies() {
+        // Create a copy of movies list to avoid modifying the original list
+        ArrayList<Movie> moviesCopy = new ArrayList<>(movies);
 
+        // Sort movies by revenue in descending order
+        Collections.sort(moviesCopy, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie movie1, Movie movie2) {
+                return Integer.compare(movie2.getRevenue(), movie1.getRevenue());
+            }
+        });
+
+        // Display top 50 revenue movies
+        System.out.println("Top 50 Highest Revenue Movies:");
+        for (int i = 0; i < Math.min(50, moviesCopy.size()); i++) {
+            Movie movie = moviesCopy.get(i);
+            System.out.println((i + 1) + ". " + movie.getTitle() + ": $" + movie.getRevenue());
+        }
+
+        // Prompt user to select a movie
+        System.out.println("Enter the number of the movie to learn more about it: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (choice >= 1 && choice <= Math.min(50, moviesCopy.size())) {
+            Movie selectedMovie = moviesCopy.get(choice - 1);
+            displayMovieInfo(selectedMovie);
+        } else {
+            System.out.println("Invalid movie choice.");
+        }
     }
+
 
     private void importMovieList(String fileName)
     {
