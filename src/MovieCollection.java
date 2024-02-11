@@ -1,8 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class MovieCollection
 {
@@ -162,33 +161,65 @@ public class MovieCollection
         System.out.println("Box office revenue: " + movie.getRevenue());
     }
 
-    private void searchCast()
-    {
-        System.out.println("Enter cast member");
-        String searchTerm = scanner.nextLine();
+    private void searchCast() {
+        // Create a set to store unique cast members
+        HashSet<String> castMembers = new HashSet<>();
 
-        searchTerm = searchTerm.toLowerCase();
+        // Iterate through all movies and add unique cast members to the set
+        for (Movie movie : movies) {
+            String[] castArray = movie.getCast().split("\\|");
+            castMembers.addAll(Arrays.asList(castArray));
+        }
 
-        ArrayList<Movie> results = new ArrayList<Movie>();
-        ArrayList<String> casts = new ArrayList<>();
+        // Convert set to sorted list
+        ArrayList<String> sortedCastList = new ArrayList<>(castMembers);
+        Collections.sort(sortedCastList);
 
-        for(int i = 0; i < movies.size(); i++){
-            String cast = movies.get(i).getCast();
-            cast = cast.toLowerCase();
-            if(cast.contains(searchTerm)){
-                casts.add(movies.get(i).getCast());
+        // Display cast members
+        System.out.println("Cast Members:");
+        for (int i = 0; i < sortedCastList.size(); i++) {
+            System.out.println((i + 1) + ". " + sortedCastList.get(i));
+        }
+
+        System.out.println("Enter the number of the cast member to see movies: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (choice >= 1 && choice <= sortedCastList.size()) {
+            String selectedCast = sortedCastList.get(choice - 1);
+            ArrayList<Movie> moviesWithSelectedCast = new ArrayList<>();
+
+            // Find movies with the selected cast member
+            for (Movie movie : movies) {
+                if (movie.getCast().toLowerCase().contains(selectedCast.toLowerCase())) {
+                    moviesWithSelectedCast.add(movie);
+                }
             }
-        }
-        for (int i = 0; i < casts.size(); i++)
-        {
-            String title = casts.get(i);
-            // this will print index 0 as choice 1 in the results list; better for user!
-            int choiceNum = i + 1;
 
-            System.out.println("" + choiceNum + ". " + title);
-        }
+            // Sort movies alphabetically by title
+            sortResults(moviesWithSelectedCast);
 
+            // Display movies with selected cast member
+            System.out.println("Movies with " + selectedCast + ":");
+            for (int i = 0; i < moviesWithSelectedCast.size(); i++) {
+                System.out.println((i + 1) + ". " + moviesWithSelectedCast.get(i).getTitle());
+            }
+
+            System.out.println("Enter the number of the movie to learn more about it: ");
+            int movieChoice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            if (movieChoice >= 1 && movieChoice <= moviesWithSelectedCast.size()) {
+                Movie selectedMovie = moviesWithSelectedCast.get(movieChoice - 1);
+                displayMovieInfo(selectedMovie);
+            } else {
+                System.out.println("Invalid movie choice.");
+            }
+        } else {
+            System.out.println("Invalid cast member choice.");
+        }
     }
+
 
     private void searchKeywords()
     {
